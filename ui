@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI辅助学习App原型</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f7;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1, h2, h3 {
+            color: #1c1c1e;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .screens {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+        
+        .screen {
+            width: 300px;
+            border: 1px solid #e0e0e0;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            background-color: white;
+        }
+        
+        .screen-header {
+            height: 50px;
+            background-color: white;
+            position: relative;
+        }
+        
+        .notch {
+            position: absolute;
+            width: 150px;
+            height: 30px;
+            background-color: #1c1c1e;
+            border-radius: 0 0 15px 15px;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .screen-content {
+            padding: 15px;
+            height: 580px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            padding: 5px 15px;
+        }
+        
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .nav-title {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .tab-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background-color: rgba(255,255,255,0.9);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 10px;
+            color: #8e8e93;
+        }
+        
+        .tab-item.active {
+            color: #007aff;
+        }
+        
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 4px;
+            background-color: currentColor;
+            mask-size: cover;
+            -webkit-mask-size: cover;
+        }
+        
+        .home-icon {
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z' /%3E%3C/svg%3E");
+            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z' /%3E%3C/svg%3E");
+        }
+        
+        .explore-icon {
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z' /%3E%3C/svg%3E");
+            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z' /%3E%3C/svg%3E");
+        }
+        
+        .ai-icon {
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M21,15.61L19.59,17L14.58,12L19.59,7L21,8.39L17.44,12L21,15.61M3,6H16V8H3V6M3,13V11H13V13H3M3,18V16H16V18H3Z' /%3E%3C/svg%3E");
+            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M21,15.61L19.59,17L14.58,12L19.59,7L21,8.39L17.44,12L21,15.61M3,6H16V8H3V6M3,13V11H13V13H3M3,18V16H16V18H3Z' /%3E%3C/svg%3E");
+        }
+        
+        .profile-icon {
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z' /%3E%3C/svg%3E");
+            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z' /%3E%3C/svg%3E");
+        }
+        
+        .learn-icon {
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12,3L1,9L12,15L21,10.09V17H23V9M5,13.18V17.18L12,21L19,17.18V13.18L12,17L5,13.18Z' /%3E%3C/svg%3E");
+            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12,3L1,9L12,15L21,10.09V17H23V9M5,13.18V17.18L12,21L19,17.18V13.18L12,17L5,13.18Z' /%3E%3C/svg%3E");
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .button {
+            background-color: #007aff;
+            color: white;
+            border-radius: 20px;
+            padding: 10px 20px;
+            text-align: center;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .button-outline {
+            border: 1px solid #007aff;
+            color: #007aff;
+            background-color: transparent;
+            border-radius: 20px;
+            padding: 10px 20px;
+            text-align: center;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .course-card {
+            display: flex;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .course-img {
+            width: 80px;
+            height: 80px;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8e8e93;
+            font-size: 10px;
+        }
+        
+        .course-info {
+            flex: 1;
+            padding: 10px;
+            background-color: white;
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background-color: #f0f0f0;
+            border-radius: 3px;
+            margin-top: 5px;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: #34c759;
+            border-radius: 3px;
+        }
+        
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 450px;
+        }
+        
+        .chat-message {
+            max-width: 80%;
+            padding: 10px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .user-message {
+            align-self: flex-end;
+            background-color: #007aff;
+            color: white;
+        }
+        
+        .ai-message {
+            align-self: flex-start;
+            background-color: #f0f0f0;
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            background-color: #f5f5f7;
+            border-radius: 20px;
+            margin-top: auto;
+        }
+        
+        .input-field {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+        }
+        
+        .send-button {
+            width: 30px;
+            height: 30px;
+            background-color: #007aff;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .grid-item {
+            background-color: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .icon-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            background-color: #f0f0f0;
+            margin-right: 15px;
+        }
+        
+        .badge {
+            display: inline-block;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            padding: 5px 10px;
+            font-size: 12px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .badge-blue {
+            background-color: #e6f2ff;
+            color: #007aff;
+        }
+        
+        .badge-green {
+            background-color: #e6fff0;
+            color: #34c759;
+        }
+        
+        .stat-box {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1c1c1e;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #8e8e93;
+        }
+        
+        .achievement-card {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background-color: white;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .achievement-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            background-color: #f0f0f0;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .achievement-info {
+            flex: 1;
+        }
+        
+        .search-bar {
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .search-icon {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            background-color: #8e8e93;
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z' /%3E%3C/svg%3E");
+            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z' /%3E%3C/svg%3E");
+            mask-size: cover;
+            -webkit-mask-size: cover;
+        }
+        
+        .search-text {
+            color: #8e8e93;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI辅助学习App原型</h1>
+        
+        <div class="section">
+            <h2>产品概述</h2>
+            <p>这是一款结合AI技术的教育学习App，旨在为用户提供个性化学习体验。通过AI辅助，帮助用户规划学习路径、解答问题、追踪学习进度，并提供互动练习和社区交流。</p>
+        </div>
+        
+        <div class="section">
+            <h2>核心功能</h2>
+            <ul>
+                <li><strong>智能学习路径：</strong>基于用户学习目标和水平，AI推荐个性化学习路径</li>
+                <li><strong>AI学习助手：</strong>随时解答问题、提供学习建议和指导</li>
+                <li><strong>互动练习：</strong>根据用户掌握程度调整难度的练习和测验</li>
+                <li><strong>学习数据分析：</strong>可视化学习进度和掌握情况</li>
+                <li><strong>学习社区：</strong>与志同道合的学习者交流分享</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>App原型界面</h2>
+            
+            <div class="screens">
+                <!-- 欢迎页 -->
+                <div class="screen">
+                    <div class="screen-header">
+                        <div class="notch"></div>
+                    </div>
+                    <div class="screen-content">
+                        <div class="status-bar">
+                            <span>9:41</span>
+                            <span>100%</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 80%;">
+                            <div style="width: 120px; height: 120px; background-color: #007aff; border-radius: 30px; display: flex; justify-content: center; align-items: center; margin-bottom: 30px;">
+                                <div style="color: white; font-size: 40px; font-weight: bold;">A+</div>
+                            </div>
+                            <h2 style="margin-bottom: 10px;">AI学习助手</h2>
+                            <p style="text-align: center; color: #8e8e93; margin-bottom: 40px;">个性化学习体验，让学习更高效</p>
+                            <div class="button">开始学习之旅</div>
+                            <div style="margin-top: 20px; font-size: 14px; color: #8e8e93;">已有账号？<span style="color: #007aff;">登录</span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 首页 -->
+                <div class="screen">
+                    <div class="screen-header">
+                        <div class="notch"></div>
+                    </div>
+                    <div class="screen-content">
+                        <div class="status-bar">
+                            <span>9:41</span>
+                            <span>100%</span>
+                        </div>
+                        <div class="nav-bar">
+                            <div class="nav-title">首页</div>
+                            <div style="width: 24px; height: 24px; background-color: #8e8e93; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover;"></div>
+                        </div>
+                        
+                        <div style="padding: 10px 0;">
+                            <div class="card" style="background-color: #f0f7ff; border: 1px solid #d0e5ff;">
+                                <div style="display: flex; align-items: center;">
+                                    <div style="width: 40px; height: 40px; background-color: #007aff; border-radius: 20px; display: flex; justify-content: center; align-items: center; margin-right: 15px;">
+                                        <div style="color: white; font-weight: bold;">AI</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight: bold; margin-bottom: 5px;">今日学习计划</div>
+                                        <div style="font-size: 12px; color: #666;">完成3个任务，提升你的数学技能</div>
+                                    </div>
+                                </div>
+                                <div class="button" style="margin-top: 15px;">查看计划</div>
+                            </div>
+                            
+                            <div style="margin: 20px 0 15px 0;">
+                                <div style="font-weight: bold; margin-bottom: 10px;">继续学习</div>
+                                <div class="course-card">
+                                    <div class="course-img">
+                                        <span>代数基础</span>
+                                    </div>
+                                    <div class="course-info">
+                                        <div style="font-weight: bold;">代数基础</div>
+                                        <div style="font-size: 12px; color: #666; margin-top: 5px;">第4章：二次方程</div>
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: 65%;"></div>
+                                        </div>
+                                        <div style="font-size: 10px; color: #8e8e93; margin-top: 5px;">65% 完成</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="course-card">
+                                    <div class="course-img" style="background-color: #f0f7ff;">
+                                        <span>英语语法</span>
+                                    </div>
+                                    <div class="course-info">
+                                        <div style="font-weight: bold;">英语语法</div>
+                                        <div style="font-size: 12px; color: #666; margin-top: 5px;">第2章：时态</div>
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: 30%;"></div>
+                                        </div>
+                                        <div style="font-size: 10px; color: #8e8e93; margin-top: 5px;">30% 完成</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin: 20px 0 15px 0;">
+                                <div style="font-weight: bold; margin-bottom: 10px;">推荐课程</div>
+                                <div style="display: flex; overflow-x: auto; gap: 15px; padding-bottom: 10px;">
+                                    <div style="min-width: 150px; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                        <div style="height: 80px; background-color: #f0f7ff; display: flex; justify-content: center; align-items: center; color: #007aff;">物理基础</div>
+                                        <div style="padding: 10px; background-color: white;">
+                                            <div style="font-weight: bold; font-size: 14px;">物理基础</div>
+                                            <div style="font-size: 12px; color: #666; margin-top: 5px;">力学与运动</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="min-width: 150px; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                        <div style="height: 80px; background-color: #fff0f5; display: flex; justify-content: center; align-items: center; color: #ff2d55;">化学入门</div>
+                                        <div style="padding: 10px; background-color: white;">
+                                            <div style="font-weight: bold; font-size: 14px;">化学入门</div>
+                                            <div style="font-size: 12px; color: #666; margin-top: 5px;">原子与分子</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="min-width: 150px; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                        <div style="height: 80px; background-color: #f0fff0; display: flex; justify-content: center; align-items: center; color: #34c759;">生物学</div>
+                                        <div style="padding: 10px; background-color: white;">
+                                            <div style="font-weight: bold; font-size: 14px;">生物学</div>
+                                            <div style="font-size: 12px; color: #666; margin-top: 5px;">细胞与生命</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-bar">
+                            <div class="tab-item active">
+                                <div class="tab-icon home-icon"></div>
+                                <span>首页</span>
+                            </div>
+                            <div class="tab-item">
+                                <div class="tab-icon learn-icon"></div>
+                                <span>学习</span>
+                            </div>
+                            <div class="tab-item">
+                                <div class="tab-icon ai-icon"></div>
+                                <span>AI助手</span>
+                            </div>
+                            <div class="tab-item">
+                                <div class="tab-icon profile-icon"></div>
+                                <span>我的</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 学习页面 -->
+                <div class="screen">
+                    <div class="screen-header">
+                        <div class="notch"></div>
+                    </div>
+                    <div class="screen-content">
+                        <div class="status-bar">
+                            <span>9:41</span>
+                            <span>100%</span>
+                        </div>
+                        <div class="nav-bar">
+                            <div class="nav-title">学习</div>
+                            <div style="width: 24px; height: 24px; background-color: #8e8e93; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover;"></div>
+                        </div>
+                        
+                        <div class="search-bar">
+                            <div class="search-icon"></div>
+                            <div class="search-text">搜索课程、技能、知识点...</div>
+                        </div>
+                        
+                        <div class="grid-container">
+                            <div class="grid-item">
+                                <div class="icon-circle" style="background-color: #f0f7ff;">
+                                    <div style="width: 24px; height: 24px; background-color: #007aff; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12,3L1,9L12,15L21,10.09V17H23V9M5,13.18V17.18L12,21L19,17.18V13.18L12,17L5,13.18Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M7,7H17V5H19V19H5V5H7V7M12,17V15H17V17H12M12,11V9H17V11H12M8,9V11H7V9H8M8,15V17H7V15H8M8,5V7H7V5H8Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover;"></div>
+                                </div>
+                                <div style="font-size: 14px; margin-top: 5px;">笔记</div>
+                            </div>
+                            
+                            <div class="grid-item">
+                                <div class="icon-circle" style="background-color: #fff9e6;">
+                                    <div style="width: 24px; height: 24px; background-color: #ff9500; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M17.5,12A1.5,1.5 0 0,1 16,10.5A1.5,1.5 0 0,1 17.5,9A1.5,1.5 0 0,1 19,10.5A1.5,1.5 0 0,1 17.5,12M14.5,8A1.5,1.5 0 0,1 13,6.5A1.5,1.5 0 0,1 14.5,5A1.5,1.5 0 0,1 16,6.5A1.5,1.5 0 0,1 14.5,8M9.5,8A1.5,1.5 0 0,1 8,6.5A1.5,1.5 0 0,1 9.5,5A1.5,1.5 0 0,1 11,6.5A1.5,1.5 0 0,1 9.5,8M6.5,12A1.5,1.5 0 0,1 5,10.5A1.5,1.5 0 0,1 6.5,9A1.5,1.5 0 0,1 8,10.5A1.5,1.5 0 0,1 6.5,12M12,3A9,9 0 0,0 3,12A9,9 0 0,0 12,21A9,9 0 0,0 21,12A9,9 0 0,0 12,3Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M17.5,12A1.5,1.5 0 0,1 16,10.5A1.5,1.5 0 0,1 17.5,9A1.5,1.5 0 0,1 19,10.5A1.5,1.5 0 0,1 17.5,12M14.5,8A1.5,1.5 0 0,1 13,6.5A1.5,1.5 0 0,1 14.5,5A1.5,1.5 0 0,1 16,6.5A1.5,1.5 0 0,1 14.5,8M9.5,8A1.5,1.5 0 0,1 8,6.5A1.5,1.5 0 0,1 9.5,5A1.5,1.5 0 0,1 11,6.5A1.5,1.5 0 0,1 9.5,8M6.5,12A1.5,1.5 0 0,1 5,10.5A1.5,1.5 0 0,1 6.5,9A1.5,1.5 0 0,1 8,10.5A1.5,1.5 0 0,1 6.5,12M12,3A9,9 0 0,0 3,12A9,9 0 0,0 12,21A9,9 0 0,0 21,12A9,9 0 0,0 12,3Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover;"></div>
+                                </div>
+                                <div style="font-size: 14px; margin-top: 5px;">社区</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin: 20px 0 15px 0;">
+                            <div style="font-weight: bold; margin-bottom: 10px;">学习进度</div>
+                            <div class="card">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                                    <div style="font-weight: bold;">本周学习统计</div>
+                                    <div style="color: #007aff; font-size: 14px;">查看详情</div>
+                                </div>
+                                
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                                    <div class="stat-box">
+                                        <div class="stat-value">4.5</div>
+                                        <div class="stat-label">学习时长(小时)</div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-value">8</div>
+                                        <div class="stat-label">完成练习</div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-value">3</div>
+                                        <div class="stat-label">掌握知识点</div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px;">
+                                        <div>学习目标完成度</div>
+                                        <div>70%</div>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress" style="width: 70%; background-color: #007aff;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin: 20px 0 15px 0;">
+                            <div style="font-weight: bold; margin-bottom: 10px;">热门课程</div>
+                            <div class="course-card">
+                                <div class="course-img" style="background-color: #fff0f5;">
+                                    <span>高级数学</span>
+                                </div>
+                                <div class="course-info">
+                                    <div style="font-weight: bold;">高级数学</div>
+                                    <div style="font-size: 12px; color: #666; margin-top: 5px;">微积分与线性代数</div>
+                                    <div style="font-size: 10px; color: #8e8e93; margin-top: 8px;">5000+ 人正在学习</div>
+                                </div>
+                            </div>
+                            
+                            <div class="course-card">
+                                <div class="course-img" style="background-color: #f0fff0;">
+                                    <span>编程入门</span>
+                                </div>
+                                <div class="course-info">
+                                    <div style="font-weight: bold;">编程入门</div>
+                                    <div style="font-size: 12px; color: #666; margin-top: 5px;">Python基础</div>
+                                    <div style="font-size: 10px; color: #8e8e93; margin-top: 8px;">8000+ 人正在学习</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-bar">
+                            <div class="tab-item">
+                                <div class="tab-icon home-icon"></div>
+                                <span>首页</span>
+                            </div>
+                            <div class="tab-item active">
+                                <div class="tab-icon learn-icon"></div>
+                                <span>学习</span>
+                            </div>
+                            <div class="tab-item">
+                                <div class="tab-icon ai-icon"></div>
+                                <span>AI助手</span>
+                            </div>
+                            <div class="tab-item">
+                                <div class="tab-icon profile-icon"></div>
+                                <span>我的</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AI助手页面 -->
+                <div class="screen">
+                    <div class="screen-header">
+                        <div class="notch"></div>
+                    </div>
+                    <div class="screen-content">
+                        <div class="status-bar">
+                            <span>9:41</span>
+                            <span>100%</span>
+                        </div>
+                        <div class="nav-bar">
+                            <div class="nav-title">AI学习助手</div>
+                            <div style="width: 24px; height: 24px; background-color: #8e8e93; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover;"></div>
+                        </div>
+                        
+                        <div style="padding: 10px 0;">
+                            <div class="chat-container">
+                                <div class="ai-message chat-message">
+                                    <div>你好！我是你的AI学习助手。今天我能帮你解答什么问题？</div>
+                                </div>
+                                
+                                <div class="user-message chat-message">
+                                    <div>我对二次方程不太理解，能帮我解释一下吗？</div>
+                                </div>
+                                
+                                <div class="ai-message chat-message">
+                                    <div>当然可以！二次方程的标准形式是 ax² + bx + c = 0，其中 a、b、c 是常数，且 a ≠ 0。
+                                    <br><br>
+                                    解二次方程的方法有几种：
+                                    <br>
+                                    1. 公式法：x = (-b ± √(b² - 4ac)) / 2a
+                                    <br>
+                                    2. 因式分解法：将方程转化为 (x-r₁)(x-r₂) = 0 的形式
+                                    <br><br>
+                                    需要我详细讲解某一种方法吗？</div>
+                                </div>
+                                
+                                <div class="user-message chat-message">
+                                    <div>能给我一个具体例子吗？</div>
+                                </div>
+                                
+                                <div class="ai-message chat-message">
+                                    <div>好的，我们来看一个例子：解方程 2x² - 5x + 3 = 0
+                                    <br><br>
+                                    使用公式法：a = 2, b = -5, c = 3
+                                    <br>
+                                    x = (-b ± √(b² - 4ac)) / 2a
+                                    <br>
+                                    x = (5 ± √(25 - 24)) / 4
+                                    <br>
+                                    x = (5 ± √1) / 4
+                                    <br>
+                                    x = (5 ± 1) / 4
+                                    <br><br>
+                                    所以 x₁ = 6/4 = 3/2 = 1.5，x₂ = 4/4 = 1
+                                    <br><br>
+                                    这样理解了吗？</div>
+                                </div>
+                            </div>
+                            
+                            <div class="chat-input">
+                                <input type="text" class="input-field" placeholder="输入你的问题...">
+                                <div class="send-button">
+                                    <div style="width: 16px; height: 16px; background-color: white; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M2,21L23,12L2,3V10L17,12L2,14V21Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M2,21L23,12L2,3V10L17,12L2,14V21Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-bar">
+                            <div class="tab-item">
+                                <div class="tab-icon home-icon"></div>
+                                <span>首页</span>
+                            </div>
+                            <div class="tab-item">
+                                <div class="tab-icon learn-icon"></div>
+                                <span>学习</span>
+                            </div>
+                            <div class="tab-item active">
+                                <div class="tab-icon ai-icon"></div>
+                                <span>AI助手</span>
+                            </div>
+                            <div class="tab-item">
+                                <div class="tab-icon profile-icon"></div>
+                                <span>我的</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 个人页面 -->
+                <div class="screen">
+                    <div class="screen-header">
+                        <div class="notch"></div>
+                    </div>
+                    <div class="screen-content">
+                        <div class="status-bar">
+                            <span>9:41</span>
+                            <span>100%</span>
+                        </div>
+                        <div class="nav-bar">
+                            <div class="nav-title">我的</div>
+                            <div style="width: 24px; height: 24px; background-color: #8e8e93; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover;"></div>
+                        </div>
+                        
+                        <div style="padding: 10px 0;">
+                            <div class="profile-header">
+                                <div class="avatar"></div>
+                                <div>
+                                    <div style="font-weight: bold; font-size: 18px; margin-bottom: 5px;">张小明</div>
+                                    <div style="font-size: 14px; color: #8e8e93;">学习爱好者 · 高中生</div>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div style="display: flex; justify-content: space-around; margin-bottom: 15px;">
+                                    <div class="stat-box">
+                                        <div class="stat-value">28</div>
+                                        <div class="stat-label">学习天数</div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-value">5</div>
+                                        <div class="stat-label">课程数</div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-value">12</div>
+                                        <div class="stat-label">完成测验</div>
+                                        </div>
+                                </div>
+                                
+                                <div>
+                                    <div style="font-size: 14px; margin-bottom: 8px;">我的技能标签</div>
+                                    <div>
+                                        <span class="badge badge-blue">数学</span>
+                                        <span class="badge badge-green">英语</span>
+                                        <span class="badge badge-blue">物理</span>
+                                        <span class="badge">化学</span>
+                                        <span class="badge">编程</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin: 20px 0 15px 0;">
+                                <div style="font-weight: bold; margin-bottom: 10px;">学习成就</div>
+                                <div class="achievement-card">
+                                    <div class="achievement-icon" style="background-color: #fff9e6;">
+                                        <div style="width: 24px; height: 24px; background-color: #ff9500; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M20,12V16C20,17.11 19.11,18 18,18H13.9L10.2,21.71C10,21.89 9.76,22 9.5,22H9A1,1 0 0,1 8,21V18H4A2,2 0 0,1 2,16V6C2,4.89 2.9,4 4,4H9.5C8.95,4.67 8.5,5.42 8.14,6.25L7.85,7L8.14,7.75C9.43,10.94 12.5,13 16,13C17.44,13 18.8,12.63 20,12M16,6C16.56,6 17,6.44 17,7C17,7.56 16.56,8 16,8C15.44,8 15,7.56 15,7C15,6.44 15.44,6 16,6Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M20,12V16C20,17.11 19.11,18 18,18H13.9L10.2,21.71C10,21.89 9.76,22 9.5,22H9A1,1 0 0,1 8,21V18H4A2,2 0 0,1 2,16V6C2,4.89 2.9,4 4,4H9.5C8.95,4.67 8.5,5.42 8.14,6.25L7.85,7L8.14,7.75C9.43,10.94 12.5,13 16,13C17.44,13 18.8,12.63 20,12M16,6C16.56,6 17,6.44 17,7C17,7.56 16.56,8 16,8C15.44,8 15,7.56 15,7C15,6.44 15.44,6 16,6Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover;"></div>
+                                    </div>
+                                    <div class="achievement-info">
+                                        <div style="font-weight: bold;">社区活跃者</div>
+                                        <div style="font-size: 12px; color: #8e8e93; margin-top: 3px;">在社区回答了10个问题</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="achievement-card">
+                                    <div class="achievement-icon" style="background-color: #f0f7ff;">
+                                        <div style="width: 24px; height: 24px; background-color: #007aff; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,10.5A1.5,1.5 0 0,1 13.5,12A1.5,1.5 0 0,1 12,13.5A1.5,1.5 0 0,1 10.5,12A1.5,1.5 0 0,1 12,10.5M7.5,10.5A1.5,1.5 0 0,1 9,12A1.5,1.5 0 0,1 7.5,13.5A1.5,1.5 0 0,1 6,12A1.5,1.5 0 0,1 7.5,10.5M16.5,10.5A1.5,1.5 0 0,1 18,12A1.5,1.5 0 0,1 16.5,13.5A1.5,1.5 0 0,1 15,12A1.5,1.5 0 0,1 16.5,10.5Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,10.5A1.5,1.5 0 0,1 13.5,12A1.5,1.5 0 0,1 12,13.5A1.5,1.5 0 0,1 10.5,12A1.5,1.5 0 0,1 12,10.5M7.5,10.5A1.5,1.5 0 0,1 9,12A1.5,1.5 0 0,1 7.5,13.5A1.5,1.5 0 0,1 6,12A1.5,1.5 0 0,1 7.5,10.5M16.5,10.5A1.5,1.5 0 0,1 18,12A1.5,1.5 0 0,1 16.5,13.5A1.5,1.5 0 0,1 15,12A1.5,1.5 0 0,1 16.5,10.5Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover;"></div>
+                                    </div>
+                                    <div class="achievement-info">
+                                        <div style="font-weight: bold;">学习达人</div>
+                                        <div style="font-size: 12px; color: #8e8e93; margin-top: 3px;">连续学习14天</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="achievement-card">
+                                    <div class="achievement-icon" style="background-color: #f0fff0;">
+                                        <div style="width: 24px; height: 24px; background-color: #34c759; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover;"></div>
+                                    </div>
+                                    <div class="achievement-info">
+                                        <div style="font-weight: bold;">数学高手</div>
+                                        <div style="font-size: 12px; color: #8e8e93; margin-top: 3px;">数学测验获得满分</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin: 20px 0 15px 0;">
+                                <div style="font-weight: bold; margin-bottom: 10px;">学习计划</div>
+                                <div class="card">
+                                    <div style="font-weight: bold; margin-bottom: 10px;">本周学习目标</div>
+                                    <div style="margin-bottom: 15px;">
+                                        <div style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 5px;">
+                                            <div>完成数学课程</div>
+                                            <div>3/5</div>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: 60%;"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="margin-bottom: 15px;">
+                                        <div style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 5px;">
+                                            <div>英语词汇学习</div>
+                                            <div>50/100</div>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: 50%;"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <div style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 5px;">
+                                            <div>物理实验报告</div>
+                                            <div>完成!</div>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: 100%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin: 20px 0 15px 0;">
+                                <div style="font-weight: bold; margin-bottom: 10px;">设置</div>
+                                <div class="card" style="padding: 0;">
+                                    <div style="padding: 15px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
+                                        <div>个人资料</div>
+                                        <div style="width: 16px; height: 16px; background-color: #8e8e93; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover;"></div>
+                                    </div>
+                                    
+                                    <div style="padding: 15px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
+                                        <div>通知设置</div>
+                                        <div style="width: 16px; height: 16px; background-color: #8e8e93; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover;"></div>
+                                    </div>
+                                    
+                                    <div style="padding: 15px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
+                                        <div>隐私设置</div>
+                                        <div style="width: 16px; height: 16px; background-color: #8e8e93; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover;"></div>
+                                    </div>
+                                    
+                                    <div style="padding: 15px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
+                                        <div>帮助与反馈</div>
+                                        <div style="width: 16px; height: 16px; background-color: #8e8e93; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover;"></div>
+                                    </div>
+                                    
+                                    <div style="padding: 15px; display: flex; justify-content: space-between; align-items: center;">
+                                        <div>关于</div>
+                                        <div style="width: 16px; height: 16px; background-color: #8e8e93; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover;"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="button-outline" style="margin-top: 20px; text-align: center;">
+                                    退出登录
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-bar">
+                            <div class="tab-item">
+                                <div class="tab-icon home-icon"></div>
+                                <span>首页</span>
+                            </div>
+                            <div class="tab-item">
+                                <div class="tab-icon learn-icon"></div>
+                                <span>学习</span>
+                            </div>
+                            <div class="tab-item">
+                                <div class="tab-icon ai-icon"></div>
+                                <span>AI助手</span>
+                            </div>
+                            <div class="tab-item active">
+                                <div class="tab-icon profile-icon"></div>
+                                <span>我的</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 课程详情页面 -->
+                <div class="screen">
+                    <div class="screen-header">
+                        <div class="notch"></div>
+                    </div>
+                    <div class="screen-content">
+                        <div class="status-bar">
+                            <span>9:41</span>
+                            <span>100%</span>
+                        </div>
+                        <div class="nav-bar">
+                            <div style="display: flex; align-items: center;">
+                                <div style="width: 24px; height: 24px; background-color: #007aff; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover; margin-right: 10px;"></div>
+                                <div class="nav-title">课程详情</div>
+                            </div>
+                            <div style="width: 24px; height: 24px; background-color: #8e8e93; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover;"></div>
+                        </div>
+                        
+                        <div style="padding: 10px 0;">
+                            <div style="height: 160px; background-color: #f0f7ff; display: flex; justify-content: center; align-items: center; border-radius: 12px; margin-bottom: 20px;">
+                                <div style="font-size: 24px; font-weight: bold; color: #007aff;">代数基础</div>
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <div style="font-weight: bold; font-size: 20px; margin-bottom: 10px;">代数基础</div>
+                                <div style="display: flex; margin-bottom: 15px;">
+                                    <div style="font-size: 14px; color: #8e8e93; margin-right: 15px;">
+                                        <span style="color: #007aff; font-weight: bold;">4.8</span> (245评分)
+                                    </div>
+                                    <div style="font-size: 14px; color: #8e8e93;">
+                                        <span style="color: #007aff; font-weight: bold;">12,500+</span> 学习者
+                                    </div>
+                                </div>
+                                <div style="font-size: 14px; line-height: 1.5; color: #333; margin-bottom: 15px;">
+                                    这门课程将带你掌握代数的基本概念和技巧，从基础方程到二次方程，全面提升你的数学能力。适合初高中学生和需要复习代数基础的学习者。
+                                </div>
+                                <div>
+                                    <span class="badge badge-blue">数学</span>
+                                    <span class="badge">初级</span>
+                                    <span class="badge">10小时</span>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <div style="font-weight: bold; margin-bottom: 10px;">课程章节</div>
+                                
+                                <div class="card" style="padding: 0; overflow: hidden;">
+                                    <div style="padding: 15px; border-bottom: 1px solid #f0f0f0;">
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                            <div style="font-weight: bold;">第1章：代数基本概念</div>
+                                            <div style="color: #34c759; font-size: 14px;">已完成</div>
+                                        </div>
+                                        <div style="font-size: 12px; color: #8e8e93;">变量、常量、表达式的基本概念</div>
+                                    </div>
+                                    
+                                    <div style="padding: 15px; border-bottom: 1px solid #f0f0f0;">
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                            <div style="font-weight: bold;">第2章：一次方程</div>
+                                            <div style="color: #34c759; font-size: 14px;">已完成</div>
+                                        </div>
+                                        <div style="font-size: 12px; color: #8e8e93;">一次方程的解法与应用</div>
+                                    </div>
+                                    
+                                    <div style="padding: 15px; border-bottom: 1px solid #f0f0f0;">
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                            <div style="font-weight: bold;">第3章：一次不等式</div>
+                                            <div style="color: #34c759; font-size: 14px;">已完成</div>
+                                        </div>
+                                        <div style="font-size: 12px; color: #8e8e93;">不等式的性质与解法</div>
+                                    </div>
+                                    
+                                    <div style="padding: 15px; border-bottom: 1px solid #f0f0f0; background-color: #f9f9f9;">
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                            <div style="font-weight: bold;">第4章：二次方程</div>
+                                            <div style="color: #ff9500; font-size: 14px;">进行中</div>
+                                        </div>
+                                        <div style="font-size: 12px; color: #8e8e93; margin-bottom: 10px;">二次方程的标准形式与解法</div>
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: 65%;"></div>
+                                        </div>
+                                        <div style="font-size: 10px; color: #8e8e93; margin-top: 5px; text-align: right;">65% 完成</div>
+                                    </div>
+                                    
+                                    <div style="padding: 15px; border-bottom: 1px solid #f0f0f0;">
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                            <div style="font-weight: bold;">第5章：函数与图像</div>
+                                            <div style="color: #8e8e93; font-size: 14px;">未开始</div>
+                                        </div>
+                                        <div style="font-size: 12px; color: #8e8e93;">函数概念与图像绘制</div>
+                                    </div>
+                                    
+                                    <div style="padding: 15px;">
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                            <div style="font-weight: bold;">第6章：代数应用</div>
+                                            <div style="color: #8e8e93; font-size: 14px;">未开始</div>
+                                        </div>
+                                        <div style="font-size: 12px; color: #8e8e93;">代数在实际问题中的应用</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <div style="font-weight: bold; margin-bottom: 10px;">学习资源</div>
+                                
+                                <div class="card" style="padding: 0; overflow: hidden;">
+                                    <div style="padding: 15px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center;">
+                                        <div style="width: 40px; height: 40px; background-color: #f0f7ff; border-radius: 8px; display: flex; justify-content: center; align-items: center; margin-right: 15px;">
+                                            <div style="width: 24px; height: 24px; background-color: #007aff; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M18,18H6V6H18V18Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M18,18H6V6H18V18Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover;"></div>
+                                        </div>
+                                        <div>
+                                            <div style="font-weight: bold;">课程视频</div>
+                                            <div style="font-size: 12px; color: #8e8e93;">25个视频课程</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="padding: 15px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center;">
+                                        <div style="width: 40px; height: 40px; background-color: #fff0f5; border-radius: 8px; display: flex; justify-content: center; align-items: center; margin-right: 15px;">
+                                            <div style="width: 24px; height: 24px; background-color: #ff2d55; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M6,2C4.89,2 4,2.89 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2H6M6,4H13V9H18V20H6V4M8,12V14H16V12H8M8,16V18H13V16H8Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M6,2C4.89,2 4,2.89 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2H6M6,4H13V9H18V20H6V4M8,12V14H16V12H8M8,16V18H13V16H8Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover;"></div>
+                                        </div>
+                                        <div>
+                                            <div style="font-weight: bold;">练习题</div>
+                                            <div style="font-size: 12px; color: #8e8e93;">100道练习题</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="padding: 15px; display: flex; align-items: center;">
+                                        <div style="width: 40px; height: 40px; background-color: #f0fff0; border-radius: 8px; display: flex; justify-content: center; align-items: center; margin-right: 15px;">
+                                            <div style="width: 24px; height: 24px; background-color: #34c759; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M7,7H17V5H19V19H5V5H7V7M12,17V15H17V17H12M12,11V9H17V11H12M8,9V11H7V9H8M8,15V17H7V15H8M8,5V7H7V5H8Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M7,7H17V5H19V19H5V5H7V7M12,17V15H17V17H12M12,11V9H17V11H12M8,9V11H7V9H8M8,15V17H7V15H8M8,5V7H7V5H8Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover;"></div>
+                                        </div>
+                                        <div>
+                                            <div style="font-weight: bold;">学习笔记</div>
+                                            <div style="font-size: 12px; color: #8e8e93;">课程学习笔记与要点</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <div style="font-weight: bold; margin-bottom: 10px;">AI学习助手</div>
+                                <div class="card">
+                                    <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                                        <div style="width: 40px; height: 40px; background-color: #007aff; border-radius: 20px; display: flex; justify-content: center; align-items: center; margin-right: 15px;">
+                                            <div style="color: white; font-weight: bold;">AI</div>
+                                        </div>
+                                        <div>
+                                            <div style="font-weight: bold;">遇到困难？向AI助手提问</div>
+                                            <div style="font-size: 12px; color: #666;">随时解答你的学习疑问</div>
+                                        </div>
+                                    </div>
+                                    <div class="button">问AI助手</div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 80px;">
+                                <div style="font-weight: bold; margin-bottom: 10px;">学习评价</div>
+                                <div class="card">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                                        <div style="font-size: 36px; font-weight: bold; color: #007aff;">4.8</div>
+                                        <div style="text-align: right;">
+                                            <div style="margin-bottom: 5px;">
+                                                <span style="color: #ff9500;">★★★★★</span> 75%
+                                            </div>
+                                            <div style="margin-bottom: 5px;">
+                                                <span style="color: #ff9500;">★★★★</span>☆ 20%
+                                            </div>
+                                            <div style="margin-bottom: 5px;">
+                                                <span style="color: #ff9500;">★★★</span>☆☆ 4%
+                                            </div>
+                                            <div style="margin-bottom: 5px;">
+                                                <span style="color: #ff9500;">★★</span>☆☆☆ 1%
+                                            </div>
+                                            <div>
+                                                <span style="color: #ff9500;">★</span>☆☆☆☆ 0%
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="margin-top: 20px;">
+                                        <div style="font-weight: bold; margin-bottom: 10px;">学员评价</div>
+                                        
+                                        <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0;">
+                                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                                <div style="font-weight: bold;">李明</div>
+                                                <div style="color: #ff9500;">★★★★★</div>
+                                            </div>
+                                            <div style="font-size: 14px; line-height: 1.5;">
+                                                课程内容非常清晰，讲解深入浅出，帮助我解决了很多代数问题。AI助手的辅助也很到位！
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                                <div style="font-weight: bold;">王芳</div>
+                                                <div style="color: #ff9500;">★★★★</div>
+                                            </div>
+                                            <div style="font-size: 14px; line-height: 1.5;">
+                                                整体来说是很好的课程，练习题丰富，但希望能增加更多实际应用的例子。
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="color: #007aff; text-align: center; margin-top: 15px; font-size: 14px;">
+                                        查看全部245条评价
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="position: fixed; bottom: 0; left: 0; right: 0; padding: 15px; background-color: white; border-top: 1px solid #f0f0f0; display: flex; justify-content: space-between;">
+                            <div class="button-outline" style="flex: 1; margin-right: 10px;">
+                                收藏课程
+                            </div>
+                            <div class="button" style="flex: 1;">
+                                继续学习
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 学习内容页面 -->
+                <div class="screen">
+                    <div class="screen-header">
+                        <div class="notch"></div>
+                    </div>
+                    <div class="screen-content">
+                        <div class="status-bar">
+                            <span>9:41</span>
+                            <span>100%</span>
+                        </div>
+                        <div class="nav-bar">
+                            <div style="display: flex; align-items: center;">
+                                <div style="width: 24px; height: 24px; background-color: #007aff; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover; margin-right: 10px;"></div>
+                                <div class="nav-title">二次方程</div>
+                            </div>
+                            <div style="width: 24px; height: 24px; background-color: #8e8e93; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover;"></div>
+                        </div>
+                        
+                        <div style="padding: 10px 0 80px 0; overflow-y: auto;">
+                            <div style="height: 180px; background-color: #f0f7ff; display: flex; justify-content: center; align-items: center; border-radius: 12px; margin-bottom: 20px;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 24px; font-weight: bold; color: #007aff; margin-bottom: 10px;">第4章：二次方程</div>
+                                    <div style="color: #666;">4.2 二次方程的解法</div>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div style="font-weight: bold; font-size: 18px; margin-bottom: 15px;">二次方程的解法</div>
+                                <div style="line-height: 1.6; margin-bottom: 15px;">
+                                    二次方程的标准形式为 ax² + bx + c = 0，其中 a、b、c 是常数，且 a ≠ 0。解二次方程有以下几种常用方法：
+                                </div>
+                                
+                                <div style="font-weight: bold; margin: 15px 0 10px 0;">1. 公式法</div>
+                                <div style="line-height: 1.6; margin-bottom: 15px;">
+                                    使用二次方程的求根公式：x = (-b ± √(b² - 4ac)) / 2a
+                                    <br><br>
+                                    其中 b² - 4ac 称为判别式，记作 Δ：
+                                    <br>
+                                    - 若 Δ > 0，方程有两个不相等的实数根
+                                    <br>
+                                    - 若 Δ = 0，方程有两个相等的实数根
+                                    <br>
+                                    - 若 Δ < 0，方程没有实数根
+                                </div>
+                                
+                                <div style="font-weight: bold; margin: 15px 0 10px 0;">2. 因式分解法</div>
+                                <div style="line-height: 1.6; margin-bottom: 15px;">
+                                    如果能将二次方程写成 (x - r₁)(x - r₂) = 0 的形式，则方程的根为 r₁ 和 r₂。
+                                </div>
+                                
+                                <div style="font-weight: bold; margin: 15px 0 10px 0;">3. 配方法</div>
+                                <div style="line-height: 1.6; margin-bottom: 15px;">
+                                    通过配方将二次方程转化为完全平方式，从而求解。
+                                </div>
+                                
+                                <div style="font-weight: bold; margin: 15px 0 10px 0;">例题</div>
+                                <div style="line-height: 1.6; margin-bottom: 15px; padding: 10px; background-color: #f9f9f9; border-radius: 8px;">
+                                    解方程：2x² - 5x + 3 = 0
+                                    <br><br>
+                                    <strong>解：</strong> 使用公式法，a = 2, b = -5, c = 3
+                                    <br>
+                                    Δ = b² - 4ac = (-5)² - 4×2×3 = 25 - 24 = 1 > 0
+                                    <br>
+                                    所以方程有两个不相等的实数根。
+                                    <br><br>
+                                    x₁ = (-b + √Δ) / 2a = (5 + 1) / 4 = 6/4 = 3/2 = 1.5
+                                    <br>
+                                    x₂ = (-b - √Δ) / 2a = (5 - 1) / 4 = 4/4 = 1
+                                    <br><br>
+                                    验证：当 x = 3/2 时，2×(3/2)² - 5×(3/2) + 3 = 2×9/4 - 15/2 + 3 = 4.5 - 7.5 + 3 = 0 ✓
+                                    <br>
+                                    当 x = 1 时，2×1² - 5×1 + 3 = 2 - 5 + 3 = 0 ✓
+                                </div>
+                                
+                                <div style="margin-top: 20px;">
+                                    <div style="font-weight: bold; margin-bottom: 10px;">练习</div>
+                                    <div style="line-height: 1.6; margin-bottom: 15px; padding: 10px; background-color: #f9f9f9; border-radius: 8px;">
+                                        解下列方程：
+                                        <br>
+                                        1. x² - 6x + 9 = 0
+                                        <br>
+                                        2. 3x² - 2x - 1 = 0
+                                        <br>
+                                        3. x² + 4x + 5 = 0
+                                    </div>
+                                    <div class="button" style="margin-top: 15px;">
+                                        开始练习
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 20px;">
+                                <div style="font-weight: bold; margin-bottom: 10px;">视频讲解</div>
+                                <div class="card">
+                                    <div style="height: 160px; background-color: #f0f0f0; border-radius: 8px; display: flex; justify-content: center; align-items: center; margin-bottom: 10px;">
+                                        <div style="width: 60px; height: 60px; background-color: rgba(0,0,0,0.5); border-radius: 30px; display: flex; justify-content: center; align-items: center;">
+                                            <div style="width: 24px; height: 24px; background-color: white; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M8,5.14V19.14L19,12.14L8,5.14Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M8,5.14V19.14L19,12.14L8,5.14Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover;"></div>
+                                        </div>
+                                    </div>
+                                    <div style="font-weight: bold;">二次方程解法详解</div>
+                                    <div style="font-size: 12px; color: #8e8e93; margin-top: 5px;">15:32 · 张教授</div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 20px;">
+                                <div style="font-weight: bold; margin-bottom: 10px;">学习笔记</div>
+                                <div class="card">
+                                    <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                                        <div style="width: 40px; height: 40px; background-color: #f0fff0; border-radius: 8px; display: flex; justify-content: center; align-items: center; margin-right: 15px;">
+                                            <div style="width: 24px; height: 24px; background-color: #34c759; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M7,7H17V5H19V19H5V5H7V7Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M7,7H17V5H19V19H5V5H7V7Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover;"></div>
+                                        </div>
+                                        <div>
+                                            <div style="font-weight: bold;">添加笔记</div>
+                                            <div style="font-size: 12px; color: #8e8e93;">记录学习要点和心得</div>
+                                        </div>
+                                    </div>
+                                    <div class="button-outline">
+                                        创建笔记
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 20px;">
+                                <div style="font-weight: bold; margin-bottom: 10px;">AI学习助手</div>
+                                <div class="card">
+                                    <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                                        <div style="width: 40px; height: 40px; background-color: #007aff; border-radius: 20px; display: flex; justify-content: center; align-items: center; margin-right: 15px;">
+                                            <div style="color: white; font-weight: bold;">AI</div>
+                                        </div>
+                                        <div>
+                                            <div style="font-weight: bold;">遇到困难？向AI助手提问</div>
+                                            <div style="font-size: 12px; color: #666;">随时解答你的学习疑问</div>
+                                        </div>
+                                    </div>
+                                    <div class="button">
+                                        问AI助手
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="position: fixed; bottom: 0; left: 0; right: 0; padding: 15px; background-color: white; border-top: 1px solid #f0f0f0; display: flex; justify-content: space-between;">
+                            <div style="display: flex; align-items: center;">
+                                <div style="width: 40px; height: 40px; background-color: #f0f0f0; border-radius: 20px; display: flex; justify-content: center; align-items: center; margin-right: 10px;">
+                                    <div style="width: 20px; height: 20px; background-color: #8e8e93; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover;"></div>
+                                </div>
+                                <div style="font-size: 14px;">上一节</div>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; background-color: #007aff; padding: 0 20px; border-radius: 20px; color: white;">
+                                <span>下一节</span>
+                                <div style="width: 20px; height: 20px; background-color: white; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover; margin-left: 10px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 练习测验页面 -->
+                <div class="screen">
+                    <div class="screen-header">
+                        <div class="notch"></div>
+                    </div>
+                    <div class="screen-content">
+                        <div class="status-bar">
+                            <span>9:41</span>
+                            <span>100%</span>
+                        </div>
+                        <div class="nav-bar">
+                            <div style="display: flex; align-items: center;">
+                                <div style="width: 24px; height: 24px; background-color: #007aff; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover; margin-right: 10px;"></div>
+                                <div class="nav-title">二次方程练习</div>
+                            </div>
+                            <div style="width: 24px; height: 24px; background-color: #8e8e93; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover;"></div>
+                        </div>
+                        
+                        <div style="padding: 10px 0 80px 0; overflow-y: auto;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 20px; padding: 0 5px;">
+                                <div style="font-size: 14px; color: #8e8e93;">问题 2/5</div>
+                                <div style="font-size: 14px; color: #8e8e93;">时间: 02:45</div>
+                            </div>
+                            
+                            <div class="progress-bar" style="margin-bottom: 20px;">
+                                <div class="progress" style="width: 40%; background-color: #007aff;"></div>
+                            </div>
+                            
+                            <div class="card">
+                                <div style="font-weight: bold; font-size: 18px; margin-bottom: 15px;">解下列二次方程</div>
+                                <div style="line-height: 1.6; margin-bottom: 20px; font-size: 18px; font-weight: bold; text-align: center;">
+                                    3x² - 2x - 1 = 0
+                                </div>
+                                
+                                <div style="margin-bottom: 15px;">
+                                    <div style="font-weight: bold; margin-bottom: 10px;">选择正确答案：</div>
+                                    
+                                    <div style="margin-bottom: 10px; padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; display: flex; align-items: center;">
+                                        <div style="width: 20px; height: 20px; border-radius: 10px; border: 2px solid #007aff; margin-right: 10px;"></div>
+                                        <div>x₁ = 1, x₂ = -1/3</div>
+                                    </div>
+                                    
+                                    <div style="margin-bottom: 10px; padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; background-color: #f0f7ff; display: flex; align-items: center;">
+                                        <div style="width: 20px; height: 20px; border-radius: 10px; border: 2px solid #007aff; background-color: #007aff; margin-right: 10px;"></div>
+                                        <div>x₁ = 1, x₂ = -1/3</div>
+                                    </div>
+                                    
+                                    <div style="margin-bottom: 10px; padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; display: flex; align-items: center;">
+                                        <div style="width: 20px; height: 20px; border-radius: 10px; border: 2px solid #007aff; margin-right: 10px;"></div>
+                                        <div>x₁ = 2/3, x₂ = -1/2</div>
+                                    </div>
+                                    
+                                    <div style="padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; display: flex; align-items: center;">
+                                        <div style="width: 20px; height: 20px; border-radius: 10px; border: 2px solid #007aff; margin-right: 10px;"></div>
+                                        <div>方程无实数解</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="font-weight: bold; margin: 20px 0 10px 0;">解题过程：</div>
+                                <div style="line-height: 1.6; margin-bottom: 15px; padding: 10px; background-color: #f9f9f9; border-radius: 8px;">
+                                    <div>使用公式法解 3x² - 2x - 1 = 0：</div>
+                                    <div>a = 3, b = -2, c = -1</div>
+                                    <div>Δ = b² - 4ac = (-2)² - 4×3×(-1) = 4 + 12 = 16</div>
+                                    <div>x₁ = (-b + √Δ) / 2a = (2 + 4) / 6 = 6/6 = 1</div>
+                                    <div>x₂ = (-b - √Δ) / 2a = (2 - 4) / 6 = -2/6 = -1/3</div>
+                                </div>
+                                
+                                <div class="button" style="margin-top: 15px;">
+                                    下一题
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 20px;">
+                                <div style="font-weight: bold; margin-bottom: 10px;">需要帮助？</div>
+                                <div class="card">
+                                    <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                                        <div style="width: 40px; height: 40px; background-color: #007aff; border-radius: 20px; display: flex; justify-content: center; align-items: center; margin-right: 15px;">
+                                            <div style="color: white; font-weight: bold;">AI</div>
+                                        </div>
+                                        <div>
+                                            <div style="font-weight: bold;">AI学习助手</div>
+                                            <div style="font-size: 12px; color: #666;">提供解题思路和方法</div>
+                                        </div>
+                                    </div>
+                                    <div class="button-outline">
+                                        获取提示
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="position: fixed; bottom: 0; left: 0; right: 0; padding: 15px; background-color: white; border-top: 1px solid #f0f0f0; display: flex; justify-content: space-between;">
+                            <div style="display: flex; align-items: center;">
+                                <div style="width: 40px; height: 40px; background-color: #f0f0f0; border-radius: 20px; display: flex; justify-content: center; align-items: center; margin-right: 10px;">
+                                    <div style="width: 20px; height: 20px; background-color: #8e8e93; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover;"></div>
+                                    </div>
+                                <div style="font-size: 14px;">上一题</div>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; background-color: #007aff; padding: 0 20px; border-radius: 20px; color: white;">
+                                <span>下一题</span>
+                                <div style="width: 20px; height: 20px; background-color: white; mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z%22 /%3E%3C/svg%3E'); -webkit-mask-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z%22 /%3E%3C/svg%3E'); mask-size: cover; -webkit-mask-size: cover; margin-left: 10px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>用户流程</h2>
+            <p>主要用户流程如下：</p>
+            <ol>
+                <li><strong>注册/登录</strong> - 用户首次进入应用时完成注册或登录</li>
+                <li><strong>首页浏览</strong> - 用户可以查看学习计划和推荐课程</li>
+                <li><strong>课程学习</strong> - 用户可以选择课程进行学习，包括视频、文本和交互式内容</li>
+                <li><strong>AI辅助解答</strong> - 用户可以随时向AI助手提问，获取个性化解答</li>
+                <li><strong>练习测验</strong> - 用户可以通过练习和测验巩固所学知识</li>
+                <li><strong>学习数据分析</strong> - 用户可以查看自己的学习进度和数据分析</li>
+            </ol>
+        </div>
+        
+        <div class="section">
+            <h2>产品亮点</h2>
+            <ol>
+                <li><strong>AI个性化学习</strong> - 根据用户的学习进度和掌握程度，提供个性化的学习路径和内容推荐</li>
+                <li><strong>实时AI解答</strong> - 随时解答用户在学习过程中遇到的问题，提供详细解释</li>
+                <li><strong>交互式学习体验</strong> - 通过视频、文本、练习等多种形式，提供全面的学习体验</li>
+                <li><strong>学习数据可视化</strong> - 直观展示学习进度和掌握情况，帮助用户了解自己的学习状态</li>
+                <li><strong>社区互动</strong> - 与其他学习者交流分享，促进协作学习</li>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>
+<!--这是一个完整的"AI辅助学习"iOS App原型HTML设计，包含以下页面：
+欢迎页 - 应用首次打开的介绍页面
+首页 - 显示学习计划、继续学习的课程和推荐课程
+学习页面 - 课程分类、学习进度和热门课程
+AI助手页面 - 与AI进行学习问答的聊天界面
+个人页面 - 用户信息、学习成就和设置
+课程详情页面 - 显示课程章节、评价和学习资源
+学习内容页面 - 具体的学习内容展示
+练习测验页面 - 交互式测验和练习
+原型设计遵循iOS设计风格，采用清晰的布局和直观的交互方式，重点突出AI辅助学习的核心功能。产品规划部分详细说明了用户流程和产品亮点，强调了AI在个性化学习中的重要作用。-->
